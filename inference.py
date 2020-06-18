@@ -11,6 +11,7 @@ from utils.data import encode_labels, flatten_dataset, augment_data, process_ima
 from utils.helpers import get_pose, convert, draw_pose
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
+from joblib import dump, load
 
 poses = [{"name": ""}]
 
@@ -27,16 +28,18 @@ def live_inference(rate=5):
     """
 
     # if there is not a classifier model, train the model then use the saved file
-    if not os.path.exists('assets/classifier.pkl'):
+    # if not os.path.exists('assets/classifier.pkl'):
+    if not os.path.exists('assets/classifier.joblib'):
         f, l, _ = process_images()
         f, l = augment_data(f, l, data_size=500)  # noqa (ambiguous variable name)
         f = flatten_dataset(f)
         l, name_map = encode_labels(l)
 
-        _, _ = train_svm_classifier(f, l, 'assets/classifier.pkl')
+        _, _ = train_svm_classifier(f, l, 'assets/classifier.joblib')
 
-    with open('assets/classifier.pkl', 'rb') as fil:
-        classifier = pickle.load(fil)
+    #with open('assets/classifier.pkl', 'rb') as fil:
+    #    classifier = pickle.load(fil)
+    classifier = load('assets/classifier.joblib')
 
     with open('assets/classes.pkl', 'rb') as fil:
         name_map = pickle.load(fil)
@@ -66,7 +69,7 @@ def live_inference(rate=5):
                 preds, img = get_pose()
 
                 # make sure that we have enough vectors to accurately classify something
-                if preds['predictions'] != [] and len(preds['predictions'][0]['pose_lines']) > 12:
+                if preds['predictions'] != [] and len(preds['predictions'][0]['pose_lines']) > 10:
                     coordinates = np.array([[d['x'], d['y']] for d in preds['predictions'][0]['body_parts']], dtype=np.float32)
                     frame = convert(coordinates)
                     missing_vals = 19 - frame.shape[0]
@@ -116,11 +119,10 @@ def live_inference(rate=5):
 
 
 if __name__ == '__main__':
-    api.run
-    #t1 = threading.Thread(target=live_inference) 
-    #t2 = threading.Thread(target=api.run)
+    t1 = threading.Thread(target=live_inference) 
+    t2 = threading.Thread(target=api.run)
 
     # starting thread 1 
-    #t1.start() 
+    t1.start() 
     # starting thread 2 
-    #t2.start() 
+    t2.start() 

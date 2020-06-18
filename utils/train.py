@@ -5,7 +5,7 @@ from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.metrics import confusion_matrix, classification_report
 from sklearn.svm import SVC
 from utils.data import process_images, augment_data, flatten_dataset, encode_labels, get_ideal_pose
-
+from joblib import dump, load
 
 def train_svm_classifier(features, labels, model_output_path):
     """
@@ -38,8 +38,10 @@ def train_svm_classifier(features, labels, model_output_path):
     print(classification_report(y_test, y_predict))
 
     # save the model to disk
-    with open(model_output_path, 'wb') as fid:
-        pickle.dump(clf, fid)
+    # with open(model_output_path, 'wb') as fid:
+    #    pickle.dump(clf, fid)
+    dump(clf, model_output_path)
+
 
     return clf, svm_model
 
