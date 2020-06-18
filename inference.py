@@ -3,12 +3,22 @@ import cv2
 import pickle
 import numpy as np
 
+from flask import Flask, json
+import threading
+
 from utils.train import train_svm_classifier
 from utils.data import encode_labels, flatten_dataset, augment_data, process_images
 from utils.helpers import get_pose, convert, draw_pose
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 
+poses = [{"name": ""}]
+
+api = Flask(__name__)
+
+@api.route('/poses', methods=['GET'])
+def get_poses():
+  return json.dumps(poses)
 
 def live_inference(rate=5):
     """
@@ -69,6 +79,7 @@ def live_inference(rate=5):
                     confidence = classifier.predict_proba(reshaped_frame)
                     current_prediction = name_map[prediction[0]]
                     print("{}%  confident that the pose is {}".format(confidence[0][prediction[0]], current_prediction))
+                    poses = [{"confidence": confidence[0][prediction[0]], "name": current_prediction}]
 
                     # check cosine similarity to the ideal pose
                     # ideal = np.array(ideal_poses[current_prediction])
@@ -105,4 +116,11 @@ def live_inference(rate=5):
 
 
 if __name__ == '__main__':
-    live_inference()
+    api.run
+    #t1 = threading.Thread(target=live_inference) 
+    #t2 = threading.Thread(target=api.run)
+
+    # starting thread 1 
+    #t1.start() 
+    # starting thread 2 
+    #t2.start() 
