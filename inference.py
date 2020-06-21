@@ -7,13 +7,13 @@ from flask import Flask, json
 import threading
 
 from utils.train import train_svm_classifier
-from utils.data import encode_labels, flatten_dataset, augment_data, process_images
+from utils.data import encode_labels, flatten_dataset, augment_data, process_images, get_ideal_pose
 from utils.helpers import get_pose, convert, draw_pose
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 from joblib import dump, load
 
-poses = [{"name": ""}]
+poses = [{"confidence": 0, "name": ""}]
 
 api = Flask(__name__)
 
@@ -26,23 +26,28 @@ def live_inference(rate=5):
     Run live inference using the webcam. Plot polar coordinates of
     the estimated pose and print prediction to terminal.
     """
+    global poses
 
     # if there is not a classifier model, train the model then use the saved file
     # if not os.path.exists('assets/classifier.pkl'):
-    if not os.path.exists('assets/classifier.joblib'):
+    if not os.path.exists('assets/classifier.joblib') or not os.path.exists('assets/ideal_poses.joblib') or not os.path.exists('assets/classes.joblib'):
         f, l, _ = process_images()
         f, l = augment_data(f, l, data_size=500)  # noqa (ambiguous variable name)
         f = flatten_dataset(f)
         l, name_map = encode_labels(l)
+
+        ideal_poses = get_ideal_pose(f, l, name_map)
+
+        dump(ideal_poses, 'assets/ideal_poses.joblib')
+        dump(name_map, 'assets/classes.joblib')
 
         _, _ = train_svm_classifier(f, l, 'assets/classifier.joblib')
 
     #with open('assets/classifier.pkl', 'rb') as fil:
     #    classifier = pickle.load(fil)
     classifier = load('assets/classifier.joblib')
-
-    with open('assets/classes.pkl', 'rb') as fil:
-        name_map = pickle.load(fil)
+    ideal_poses = load('assets/ideal_poses.joblib')
+    name_map = load('assets/classes.joblib')
 
     fig = plt.figure()
     fig.show()
@@ -119,10 +124,15 @@ def live_inference(rate=5):
 
 
 if __name__ == '__main__':
-    t1 = threading.Thread(target=live_inference) 
-    t2 = threading.Thread(target=api.run)
+    t1 = threading.Thread(target=live_inference)
+    t2 = threading.Thread(target=get_poses)
+    t3 = threading.Thread(target=api.run)
 
     # starting thread 1 
-    t1.start() 
-    # starting thread 2 
-    t2.start() 
+    t1.start()
+    t2.start()
+    t3.start()
+
+    t1.join()
+    t2.join()
+    t3.join()
