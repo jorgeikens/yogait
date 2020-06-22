@@ -1,0 +1,56 @@
+name: yogait
+channels:
+  - https://conda.anaconda.org/menpo
+  - defaults
+dependencies:
+  - backcall=0.2.0=py_0
+  - ca-certificates=2020.1.1=0
+  - certifi=2020.4.5.2=py37_0
+  - click=7.1.2=py_0
+  - colorama=0.4.3=py_0
+  - decorator=4.4.2=py_0
+  - flask=1.1.2=py_0
+  - ipython=7.15.0=py37_0
+  - ipython_genutils=0.2.0=py37_0
+  - itsdangerous=1.1.0=py37_0
+  - jedi=0.17.0=py37_0
+  - jinja2=2.11.2=py_0
+  - markupsafe=1.1.1=py37he774522_0
+  - openssl=1.1.1g=he774522_0
+  - parso=0.7.0=py_0
+  - pickleshare=0.7.5=py37_0
+  - pip=20.1.1=py37_1
+  - prompt-toolkit=3.0.5=py_0
+  - pygments=2.6.1=py_0
+  - python=3.7.7=h81c818b_4
+  - setuptools=47.3.0=py37_0
+  - six=1.15.0=py_0
+  - sqlite=3.31.1=h2a8f88b_1
+  - traitlets=4.3.3=py37_0
+  - vc=14.1=h0510ff6_4
+  - vs2015_runtime=14.16.27012=hf0eaf9b_2
+  - wcwidth=0.2.4=py_0
+  - werkzeug=1.0.1=py_0
+  - wheel=0.34.2=py37_0
+  - wincertstore=0.2=py37_0
+  - zlib=1.2.11=h62dcd97_4
+  - pip:
+    - chardet==3.0.4
+    - cycler==0.10.0
+    - idna==2.8
+    - joblib==0.15.1
+    - kiwisolver==1.2.0
+    - matplotlib==3.1.1
+    - numpy==1.18.5
+    - opencv-python==4.1.0.25
+    - pandas==0.25.1
+    - pyparsing==2.4.7
+    - python-dateutil==2.8.1
+    - pytz==2020.1
+    - requests==2.21.0
+    - scikit-learn==0.21.3
+    - scipy==1.4.1
+    - seaborn==0.9.0
+    - urllib3==1.24.3
+prefix: C:\Users\20174486\Miniconda3\envs\yogait
+
