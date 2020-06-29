@@ -74,7 +74,7 @@ def live_inference(rate=5):
                 preds, img = get_pose()
 
                 # make sure that we have enough vectors to accurately classify something
-                if preds['predictions'] != [] and len(preds['predictions'][0]['pose_lines']) > 10:
+                if preds['predictions'] != [] and len(preds['predictions'][0]['pose_lines']) > 6:
                     coordinates = np.array([[d['x'], d['y']] for d in preds['predictions'][0]['body_parts']], dtype=np.float32)
                     frame = convert(coordinates)
                     missing_vals = 19 - frame.shape[0]
